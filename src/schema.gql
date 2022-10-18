@@ -1,0 +1,30 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Page {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+type Query {
+  pages: [Page!]!
+  page(id: Int!): Page!
+}
+
+type Mutation {
+  createPage(createPageInput: CreatePageInput!): Page!
+  updatePage(updatePageInput: UpdatePageInput!): Page!
+  removePage(id: Int!): Page!
+}
+
+input CreatePageInput {
+  """Example field (placeholder)"""
+  exampleField: Int!
+}
+
+input UpdatePageInput {
+  """Example field (placeholder)"""
+  exampleField: Int
+  id: Int!
+}
