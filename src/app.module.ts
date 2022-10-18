@@ -3,9 +3,10 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CommonModule } from './config/common.module';
 import { PagesModule } from './pages/pages.module';
+import { ProductsModule } from './products/products.module';
 
 @Module({
-  imports: [PagesModule, CommonModule],
+  imports: [PagesModule, CommonModule, ProductsModule],
   controllers: [AppController],
   providers: [AppService],
 })
