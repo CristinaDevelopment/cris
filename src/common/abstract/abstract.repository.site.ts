@@ -9,9 +9,16 @@ import { AbstractDocument } from './abstract.schema';
 // import { CreatePage, UpdatePage } from '../../pages/dto/page.input';
 import { capitalizar, slug } from 'utils/function';
 import { CreatePage, UpdateImage, UpdatePage } from 'src/pages/dto/page.input';
+import {
+  CreateSite,
+  UpdateDataBase,
+  UpdateImageSite,
+  UpdateSite,
+} from 'src/sites/dto/site.input';
+import { uuidv3 } from 'utils';
 // import { UpdateImage } from 'src/product/dto/product.input';
 
-export abstract class AbstractRepositoryPage<
+export abstract class AbstractRepositorySite<
   TDocument extends AbstractDocument,
 > {
   protected abstract readonly logger: Logger;
@@ -25,51 +32,19 @@ export abstract class AbstractRepositoryPage<
   //   });
   //   return (await createdDocument.save()).toJSON() as unknown as TDocument;
   // }
-  async add(input: CreatePage): Promise<TDocument> {
-    const page = await this.model.findOne(
-      {
-        slug: slug(input.title),
-        siteId: input.siteId,
-        parentId: input.parentId,
-      },
-      {},
-      { lean: true },
-    );
-
-    if (page) {
-      // this.logger.warn('Document not found with filterQuery', filterQuery);
-      throw new UnprocessableEntityException(
-        `You already have an item registered with that name "${input.title}"`,
-      );
-    }
-    const createdDocument = new this.model(this.pageCreated(input));
+  async add(input: CreateSite): Promise<TDocument> {
+    const createdDocument = new this.model(this.siteCreated(input));
     return (await createdDocument.save()).toJSON() as unknown as TDocument;
   }
 
   async update(
     id: string,
-    input: UpdatePage,
+    input: UpdateSite,
     options: Record<string, unknown> = { lean: true, new: true },
   ) {
-    const page = await this.model.findOne(
-      {
-        _id: { $ne: id },
-        slug: slug(input.title),
-        siteId: input.siteId,
-        parentId: input.parentId,
-      },
-      {},
-      { lean: true },
-    );
-    if (page) {
-      // this.logger.warn('Document not found with filterQuery', filterQuery);
-      throw new UnprocessableEntityException(
-        `You already have an item registered with that name "${input.title}"`,
-      );
-    }
     const document = await this.model.findOneAndUpdate(
       { _id: id },
-      this.pageUpdate(input),
+      this.siteUpdate(input),
       options,
     );
     if (!document) {
@@ -78,15 +53,41 @@ export abstract class AbstractRepositoryPage<
     }
     return document;
   }
-  async updateImage(
+  async updateDB(
     id: string,
-    input: UpdateImage,
-    uid: string,
+    input: UpdateDataBase[],
     options: Record<string, unknown> = { lean: true, new: true },
   ) {
     const document = await this.model.findOneAndUpdate(
       { _id: id },
-      this.pageImage(input, uid),
+      {
+        $set: {
+          'data.dataBase': input.map((data) => ({
+            uid: uuidv3(), 
+            label: capitalizar(data.type),
+            value: slug(data.type),
+          })),
+        },
+      },
+      options,
+    );
+    if (!document) {
+      // this.logger.warn(`Document not found with filterQuery:`, filterQuery);
+      throw new NotFoundException('Document not found.');
+    }
+    return document;
+  }
+
+  async updateImage(
+    id: string,
+    input: UpdateImage,
+    uid: string,
+    type: string,
+    options: Record<string, unknown> = { lean: true, new: true },
+  ) {
+    const document = await this.model.findOneAndUpdate(
+      { _id: id },
+      this.siteImage(input, uid, type),
       options,
     );
     if (!document) {
@@ -122,16 +123,16 @@ export abstract class AbstractRepositoryPage<
   //   return document;
   // }
 
-  async updateMany(
-    filterQuery: FilterQuery<TDocument>,
-    update: UpdateQuery<TDocument>,
-  ) {
-    const document = await this.model.updateMany(
-      { siteId: filterQuery.siteId },
-      { $set: update },
-    );
-    return document;
-  }
+  // async updateMany(
+  //   filterQuery: FilterQuery<TDocument>,
+  //   update: UpdateQuery<TDocument>,
+  // ) {
+  //   const document = await this.model.updateMany(
+  //     { siteId: filterQuery.siteId },
+  //     { $set: update },
+  //   );
+  //   return document;
+  // }
 
   async find(filterQuery: FilterQuery<TDocument>) {
     return this.model.find(filterQuery, {}, { lean: true });
@@ -159,7 +160,7 @@ export abstract class AbstractRepositoryPage<
     const { limit, offset } = paginationQuery;
     return this.model
       .find(filterQuery, {}, { lean: true })
-      .sort({ 'updateDate.createdAt': 1 })
+      .sort({ 'data.updateDate.createdAt': 1 })
       .skip(offset)
       .limit(limit)
       .exec();
@@ -182,57 +183,114 @@ export abstract class AbstractRepositoryPage<
   //   }
   //   return;
   // }
-  private pageCreated({
-    type,
-    title,
+  private siteCreated({
+    domain,
+    name,
     description,
-    parentId,
-    siteId,
-  }: CreatePage) {
+    type,
+    client,
+    uid,
+  }: CreateSite) {
+    const web = domain.split('.');
+    const nameDomain = web[0];
+    web.shift();
+    const dlt = web.join('.');
     return {
       _id: new Types.ObjectId(),
       data: {
+        name: name,
+        description: description,
+        dataBase: [],
+        users: [],
+        domain: {
+          name: nameDomain,
+          dlt: dlt,
+        },
         type: type,
         seo: {
-          title: capitalizar(title),
-          href: slug(title) === 'home' ? '' : slug(title),
+          title: name,
+          href: '#',
           description: description,
         },
+        client: client,
         updateDate: {
           createdAt: new Date(),
-          lastUpdatedAt: new Date(),
+          register: [
+            {
+              uid: uid,
+              change: 'created',
+              updatedAt: new Date(),
+            },
+          ],
         },
-        section: [],
       },
-      parentId: parentId,
-      siteId: siteId,
-      slug: slug(title),
+      url: domain,
     };
   }
-  private pageUpdate({ type, title, description }: UpdatePage) {
+  private siteUpdate({
+    domain,
+    name,
+    description,
+    type,
+    uid,
+    change,
+  }: UpdateSite) {
+    const web = domain.split('.');
+    const nameDomain = web[0];
+    web.shift();
+    const dlt = web.join('.');
     return {
       $set: {
+        'data.name': name,
+        'data.domain': {
+          name: nameDomain,
+          dlt: dlt,
+        },
+        'data.description': description,
         'data.type': type,
-        'data.seo.title': capitalizar(title),
-        'data.seo.href': slug(title),
+        'data.seo.title': name,
+        'data.seo.href': '',
         'data.seo.description': description,
-        'data.updateData.lastUpdatedAt': new Date(),
-        slug: slug(title),
-      },
-      $push: { 'data.updateDate.register': { updatedAt: new Date() } },
-    };
-  }
-  private pageImage(input: UpdateImage, uid: string) {
-    return {
-      $set: {
-        'data.seo.image.src': input.src,
-        'data.seo.image.alt': input.alt,
-        'data.updateDate.lastUpdatedAt': new Date(),
+        url: domain,
       },
       $push: {
         'data.updateDate.register': {
           uid: uid,
-          change: 'image update',
+          change: change,
+          updatedAt: new Date(),
+        },
+      },
+    };
+  }
+  private siteImage({ src, alt }: UpdateImageSite, uid: string, type: string) {
+    return {
+      $set:
+        type === 'logo'
+          ? {
+              'data.logo': {
+                src: src,
+                alt: alt,
+              },
+            }
+          : type === 'site'
+          ? {
+              'data.banner': {
+                src: src,
+                alt: alt,
+              },
+              'data.seo.image.src': src,
+              'data.seo.image.alt': alt,
+            }
+          : {
+              'data.icon': {
+                src: src,
+                alt: alt,
+              },
+            },
+      $push: {
+        'data.updateDate.register': {
+          uid: uid,
+          change: `${type} image update`,
           updatedAt: new Date(),
         },
       },

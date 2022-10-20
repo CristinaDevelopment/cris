@@ -4,17 +4,17 @@ import { GetPage } from '../dto/page.args';
 import { CreatePage, UpdateImage, UpdatePage } from '../dto/page.input';
 import { PageDocument } from '../entities/page.schema';
 import {
-  Pages0EcommerceRepository,
-  Pages1EcommerceRepository,
-  Pages2EcommerceRepository,
-} from './pages.ecommerce.repository';
+  Pages0MarketingRepository,
+  Pages1MarketingRepository,
+  Pages2MarketingRepository,
+} from './pages.marketing.repository';
 
 @Injectable()
-export class PagesEcommerceService {
+export class PagesMarketingService {
   constructor(
-    private readonly page0Repository: Pages0EcommerceRepository,
-    private readonly page1Repository: Pages1EcommerceRepository,
-    private readonly page2Repository: Pages2EcommerceRepository,
+    private readonly page0Repository: Pages0MarketingRepository,
+    private readonly page1Repository: Pages1MarketingRepository,
+    private readonly page2Repository: Pages2MarketingRepository,
   ) {}
   async create(input: CreatePage, type: string) {
     let data;

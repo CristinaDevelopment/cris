@@ -2,28 +2,371 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Page {
+type Image {
+  uid: String
+  src: String!
+  alt: String!
+}
+
+type Seo {
+  title: String!
+  href: String!
+  description: String!
+  image: Image
+}
+
+type UpdateDate {
+  createdAt: DateTime!
+  lastUpdatedAt: DateTime
+  register: [Register!]
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Register {
+  uid: String
+  change: String
+  updatedAt: DateTime!
+}
+
+type PageDataDto {
+  count: Float!
+  limit: Float!
+  offset: Float!
+}
+
+type Product {
   """Example field (placeholder)"""
   exampleField: Int!
+}
+
+type Page {
+  _id: ID!
+  data: DataPage!
+  slug: String!
+  siteId: String!
+  parentId: String!
+  page: [Page!]!
+  product: [Product!]!
+}
+
+type DataPage {
+  type: String!
+  icon: String
+  seo: Seo!
+  section: [ComponentPage!]!
+  updateDate: UpdateDate!
+}
+
+type ComponentPage {
+  uid: String!
+  component: String!
+  html: String!
+}
+
+type Page0 {
+  _id: ID!
+  data: DataPage!
+  slug: String!
+  siteId: String!
+  parentId: String!
+  page: [Page1]
+  product: [Product!]!
+}
+
+type Page1 {
+  _id: ID!
+  data: DataPage!
+  slug: String!
+  siteId: String!
+  parentId: String!
+  page: [Page2]
+  product: [Product!]!
+}
+
+type Page2 {
+  _id: ID!
+  data: DataPage!
+  slug: String!
+  siteId: String!
+  parentId: String!
+  page: [Page!]!
+  product: [Product!]!
+}
+
+type ListPage {
+  page: PageConnection!
+  pageData: PageDataDto
+}
+
+type PageConnection {
+  edges: [PageEdge!]
+  pageInfo: PagePageInfo
+}
+
+type PageEdge {
+  cursor: String
+  node: Page
+}
+
+type PagePageInfo {
+  startCursor: String
+  endCursor: String
+  hasPreviousPage: Boolean!
+  hasNextPage: Boolean!
+}
+
+type Site {
+  _id: ID!
+  data: Data!
+  url: String!
+  page: [Page0]
+}
+
+type Data {
+  name: String!
+  numberPhone: Float
+  address: String
+  type: String!
+  users: [String!]!
+  location: String
+  dataBase: [DataBase!]!
+  description: String!
+  domain: Domain!
+  banner: Image
+  logo: Image
+  icon: Image
+  seo: Seo!
+  client: String!
+  updateDate: UpdateDate!
+}
+
+type DataBase {
+  uid: String!
+  label: String!
+  value: String!
+}
+
+type Domain {
+  name: String!
+  dlt: String!
+}
+
+type ListSiteResponse {
+  page: SiteConnection!
+  pageData: PageDataDto
+}
+
+type SiteConnection {
+  edges: [SiteEdge!]
+  pageInfo: SitePageInfo
+}
+
+type SiteEdge {
+  cursor: String
+  node: Site
+}
+
+type SitePageInfo {
+  startCursor: String
+  endCursor: String
+  hasPreviousPage: Boolean!
+  hasNextPage: Boolean!
 }
 
 type Query {
-  pages: [Page!]!
-  page(id: Int!): Page!
+  findPage0Ecommerce(id: ID!): Page0!
+  findPages0Ecommerce: [Page0!]!
+  findPages0EcommerceByParentId(parentId: String!): [Page0!]!
+  listPages0EcommerceWithCursor(args: ConnectionArgs!, parentId: String!): ListPage!
+  findPage1Ecommerce(id: ID!): Page1!
+  findPages1Ecommerce: [Page1!]!
+  findPages1EcommerceByParentId(parentId: String!): [Page1!]!
+  listPages1EcommerceWithCursor(args: ConnectionArgs!, parentId: String!): ListPage!
+  findPage2Ecommerce(id: ID!): Page2!
+  findPages2Ecommerce: [Page2!]!
+  findPages2EcommerceByParentId(parentId: String!): [Page2!]!
+  listPages2EcommerceWithCursor(args: ConnectionArgs!, parentId: String!): ListPage!
+  findPage0Food(id: ID!): Page0!
+  findPages0Food: [Page0!]!
+  findPages0FoodByParentId(parentId: String!): [Page0!]!
+  listPages0FoodWithCursor(args: ConnectionArgs!, parentId: String!): ListPage!
+  findPage1Food(id: ID!): Page1!
+  findPages1Food: [Page1!]!
+  findPages1FoodByParentId(parentId: String!): [Page1!]!
+  listPages1FoodWithCursor(args: ConnectionArgs!, parentId: String!): ListPage!
+  findPage2Food(id: ID!): Page2!
+  findPages2Food: [Page2!]!
+  findPages2FoodByParentId(parentId: String!): [Page2!]!
+  listPages2FoodWithCursor(args: ConnectionArgs!, parentId: String!): ListPage!
+  findPage0Marketing(id: ID!): Page0!
+  findPages0Marketing: [Page0!]!
+  findPages0MarketingByParentId(parentId: String!): [Page0!]!
+  listPages0MarketingWithCursor(args: ConnectionArgs!, parentId: String!): ListPage!
+  findPage1Marketing(id: ID!): Page1!
+  findPages1Marketing: [Page1!]!
+  findPages1MarketingByParentId(parentId: String!): [Page1!]!
+  listPages1MarketingWithCursor(args: ConnectionArgs!, parentId: String!): ListPage!
+  findPage2Marketing(id: ID!): Page2!
+  findPages2Marketing: [Page2!]!
+  findPages2MarketingByParentId(parentId: String!): [Page2!]!
+  listPages2MarketingWithCursor(args: ConnectionArgs!, parentId: String!): ListPage!
+  findPage0Education(id: ID!): Page0!
+  findPages0Education: [Page0!]!
+  findPages0EducationByParentId(parentId: String!): [Page0!]!
+  listPages0EducationWithCursor(args: ConnectionArgs!, parentId: String!): ListPage!
+  findPage1Education(id: ID!): Page1!
+  findPages1Education: [Page1!]!
+  findPages1EducationByParentId(parentId: String!): [Page1!]!
+  listPages1EducationWithCursor(args: ConnectionArgs!, parentId: String!): ListPage!
+  findPage2Education(id: ID!): Page2!
+  findPages2Education: [Page2!]!
+  findPages2EducationByParentId(parentId: String!): [Page2!]!
+  listPages2EducationWithCursor(args: ConnectionArgs!, parentId: String!): ListPage!
+  findSite(id: ID!, typeSite: String!): Site!
+  findSites(typeSite: String!): [Site!]!
+  sitesByPagination(input: ListInput!, typeSite: String!): [Site!]!
+  listSitesWithCursor(args: ConnectionArgs!, typeSite: String!): ListSiteResponse!
+  products: [Product!]!
+  product(id: Int!): Product!
+}
+
+input ConnectionArgs {
+  """Paginate before opaque cursor"""
+  before: String
+
+  """Paginate after opaque cursor"""
+  after: String
+
+  """Paginate first"""
+  first: Float
+
+  """Paginate last"""
+  last: Float
+}
+
+input ListInput {
+  """classical limit"""
+  limit: Float!
+
+  """classical offset"""
+  offset: Float!
 }
 
 type Mutation {
-  createPage(createPageInput: CreatePageInput!): Page!
-  updatePage(updatePageInput: UpdatePageInput!): Page!
-  removePage(id: Int!): Page!
+  createPage0Ecommerce(input: CreatePage!): Page0!
+  updatePage0Ecommerce(id: ID!, input: UpdatePage!): Page0!
+  deletePage0Ecommerce(id: ID!): String!
+  deletePages0EcommerceById(ids: [String!]!): [String!]!
+  createPage1Ecommerce(input: CreatePage!): Page1!
+  updatePage1Ecommerce(id: ID!, input: UpdatePage!): Page1!
+  deletePage1Ecommerce(id: ID!): String!
+  deletePages1EcommerceById(ids: [String!]!): [String!]!
+  createPage2Ecommerce(input: CreatePage!): Page2!
+  updatePage2Ecommerce(id: ID!, input: UpdatePage!): Page2!
+  deletePage2Ecommerce(id: ID!): String!
+  deletePages2EcommerceById(ids: [String!]!): [String!]!
+  createPage0Food(input: CreatePage!): Page0!
+  updatePage0Food(id: ID!, input: UpdatePage!): Page0!
+  deletePage0Food(id: ID!): String!
+  deletePages0FoodById(ids: [String!]!): [String!]!
+  createPage1Food(input: CreatePage!): Page1!
+  updatePage1Food(id: ID!, input: UpdatePage!): Page1!
+  deletePage1Food(id: ID!): String!
+  deletePages1FoodById(ids: [String!]!): [String!]!
+  createPage2Food(input: CreatePage!): Page2!
+  updatePage2Food(id: ID!, input: UpdatePage!): Page2!
+  deletePage2Food(id: ID!): String!
+  deletePages2FoodById(ids: [String!]!): [String!]!
+  createPage0Marketing(input: CreatePage!): Page0!
+  updatePage0Marketing(id: ID!, input: UpdatePage!): Page0!
+  deletePage0Marketing(id: ID!): String!
+  deletePages0MarketingById(ids: [String!]!): [String!]!
+  createPage1Marketing(input: CreatePage!): Page1!
+  updatePage1Marketing(id: ID!, input: UpdatePage!): Page1!
+  deletePage1Marketing(id: ID!): String!
+  deletePages1MarketingById(ids: [String!]!): [String!]!
+  createPage2Marketing(input: CreatePage!): Page2!
+  updatePage2Marketing(id: ID!, input: UpdatePage!): Page2!
+  deletePage2Marketing(id: ID!): String!
+  deletePages2MarketingById(ids: [String!]!): [String!]!
+  createPage0Education(input: CreatePage!): Page0!
+  updatePage0Education(id: ID!, input: UpdatePage!): Page0!
+  deletePage0Education(id: ID!): String!
+  deletePages0EducationById(ids: [String!]!): [String!]!
+  createPage1Education(input: CreatePage!): Page1!
+  updatePage1Education(id: ID!, input: UpdatePage!): Page1!
+  deletePage1Education(id: ID!): String!
+  deletePages1EducationById(ids: [String!]!): [String!]!
+  createPage2Education(input: CreatePage!): Page2!
+  updatePage2Education(id: ID!, input: UpdatePage!): Page2!
+  deletePage2Education(id: ID!): String!
+  deletePages2EducationById(ids: [String!]!): [String!]!
+  createSite(input: CreateSite!, typeSite: String!): Site!
+  updateSite(id: ID!, input: UpdateSite!, typeSite: String!): Site!
+  updateSiteImage(id: ID!, input: UpdateImageSite!, type: String!, uid: String!, typeSite: String!): Site!
+  updateDataBase(id: ID!, input: [UpdateDataBase!]!, typeSite: String!): Site!
+  deleteSite(id: ID!, typeSite: String!): String!
+  deleteSites(ids: [String!]!, typeSite: String!): [String!]!
+  createProduct(createProductInput: CreateProductInput!): Product!
+  updateProduct(updateProductInput: UpdateProductInput!): Product!
+  removeProduct(id: Int!): Product!
 }
 
-input CreatePageInput {
+input CreatePage {
+  title: String!
+  description: String!
+  type: String!
+  parentId: String!
+  siteId: String!
+}
+
+input UpdatePage {
+  title: String!
+  description: String!
+  type: String!
+  parentId: String!
+  siteId: String!
+}
+
+input CreateSite {
+  name: String!
+  domain: String!
+  description: String!
+  type: String!
+  client: String!
+  change: String!
+  uid: String!
+}
+
+input UpdateSite {
+  name: String!
+  domain: String!
+  description: String!
+  type: String!
+  change: String!
+  uid: String!
+}
+
+input UpdateImageSite {
+  uid: String
+  src: String!
+  alt: String!
+}
+
+input UpdateDataBase {
+  type: String!
+}
+
+input CreateProductInput {
   """Example field (placeholder)"""
   exampleField: Int!
 }
 
-input UpdatePageInput {
+input UpdateProductInput {
   """Example field (placeholder)"""
   exampleField: Int
   id: Int!

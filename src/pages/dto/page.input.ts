@@ -1,0 +1,27 @@
+import { InputType, Field, OmitType } from '@nestjs/graphql';
+
+@InputType()
+export class CreatePage {
+  @Field()
+  readonly title: string;
+  @Field()
+  readonly description: string;
+  @Field()
+  readonly type: string;
+  @Field()
+  readonly parentId: string;
+  @Field()
+  readonly siteId: string;
+}
+@InputType()
+export class UpdatePage extends OmitType(CreatePage, [] as const) {}
+
+@InputType()
+export class UpdateImage {
+  @Field({ nullable: true })
+  readonly uid?: string;
+  @Field()
+  readonly src: string;
+  @Field()
+  readonly alt: string;
+}

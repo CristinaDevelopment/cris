@@ -1,8 +1,15 @@
 import { Module } from '@nestjs/common';
-import { ProductsService } from './products.service';
-import { ProductsResolver } from './products.resolver';
+import { ProductsWearService } from './wear/products.wear.service';
+import { ProductsWearResolver } from './wear/products.wear.resolver';
+import { ProductsFoodResolver } from './food/products.food.resolver';
+import { ProductsFoodService } from './food/products.food.service';
 
 @Module({
-  providers: [ProductsResolver, ProductsService]
+  providers: [
+    ProductsWearResolver,
+    ProductsWearService,
+    ProductsFoodResolver,
+    ProductsFoodService,
+  ],
 })
 export class ProductsModule {}
